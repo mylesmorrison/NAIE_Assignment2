@@ -1,0 +1,8 @@
+# created by virtualenv automatically
+# But not these files:
+*
+
+# Also do not ignore .gitignore itself
+!.gitignore
+
+!main.py
