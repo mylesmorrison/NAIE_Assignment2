@@ -40,19 +40,32 @@ student_id_list = get_student_id_to_test("Student_Records.txt", 1)
 
 # 1st Hash Function
 # Positional Multiplied with Index Sum - Hash Code
-# Division - Compression function
+# Division - Compression Function
 
 def position_mult_index_hash_code(student_id_list):
     value = 0
     for i in range(len(student_id_list)):
         value += ord(student_id_list[i]) * i
-    return value
+    return value, len(student_id_list)
 
-print(position_mult_index_hash_code(student_id_list))
 
+value, length = position_mult_index_hash_code(student_id_list)
+print(f"Hash Code: {value}, length: {length}")
 # super simple compression function
-def division_hash_compress(value):
-    #
+def division_hash_compress(value, length):
+    return value % length
+
+hash = division_hash_compress(value, length)
+print(f"Compression Value: {hash}")
+
+# 2nd Hash Function
+# Polynomial Rolling - Hash Function
+# Multiply, Adding and Divide - Compression Function
+def polynomial_rolling_hash_code(student_id_list):
+    value = 0
+
+def MAD_hash_compress(value, length):
+    return
 
 
 
