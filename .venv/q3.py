@@ -12,12 +12,22 @@ with a given ID number.
 
 """
 
-#1 Create 3 hash functions suitable for the given problem
+"""
+3.1
+"""
+
+"""
+1. Create 3 hash functions suitable for the given problem. (Separate the hash function into a
+hashcode, and a compression function).
+"""
 
 # From Lectures (Week 6) - Hash Tables and Maps
 
 # I will test the code using Student_Records.txt
 
+# The length of the Hash Table
+# Should be a
+HASH_TABLE_SIZE = 1003
 
 def get_student_id_to_test(filename, number):
     file = open(filename)
@@ -52,23 +62,110 @@ def position_mult_index_hash_code(student_id_list):
 value, length = position_mult_index_hash_code(student_id_list)
 print(f"Hash Code: {value}, length: {length}")
 # super simple compression function
-def division_hash_compress(value, length):
-    return value % length
+def division_hash_compress(value, m):
+    return value % m
 
 hash = division_hash_compress(value, length)
 print(f"Compression Value: {hash}")
 
 # 2nd Hash Function
-# Polynomial Rolling - Hash Function
+# Polynomial Accumulation - Hash Code
 # Multiply, Adding and Divide - Compression Function
-def polynomial_rolling_hash_code(student_id_list):
-    value = 0
 
-def MAD_hash_compress(value, length):
-    return
+#No Horners Rule yet
+def polynomial_rolling_hash_code_no_horners(student_id_list, z=31):
+    hash_value = 0
+    hash_power = 0
+    for char in student_id_list:
+        hash_value += ord(char) * z ** hash_power
+        hash_power+=1
+    return hash_value
+
+# set z to 31 as I looked it up and that's the value it said was most common
+# got to reference and understand why this is!!!!
+def polynomial_rolling_hash_code_horners(student_id_list, z=31):
+    hash_value = 0
+    for i in range(len(student_id_list)-1, 0, -1):
+        if i == len(student_id_list)-1:
+            hash_value += ord(student_id_list[i]) * z + ord(student_id_list[i-1])
+            continue
+        hash_value = (hash_value*z) + ord(student_id_list[i-1])
+    return hash_value, len(student_id_list)
+
+#print(polynomial_rolling_hash_code_no_horners(student_id_list))
+#print(polynomial_rolling_hash_code_horners(student_id_list))
+
+value, length = polynomial_rolling_hash_code_horners(student_id_list)
+print(f"value: {value}, length: {length}")
+
+# set values for a and b that are constants the rule is that a and b are not divisible by
+# length so then I should use prime number
+def MAD_hash_compress(value, m, a=31, b=17):
+    return (a*value + b) % m
+
+hash = MAD_hash_compress(value, length)
+print(f"Compression Value: {hash}")
+
+# 3rd Hash Function
+# Folding Hash Code - Hash Code
+# Universal Hash - Compression Function
+
+#reference the folding hash
+#reference the Universal Hash
+
+def folding_hash_code(key):
+    chunks = [key[i:i + 2] for i in range(0, len(key), 2)]
+    total = 0
+    for chunk in chunks:
+        chunk_value = 0
+        for char in chunk:
+            chunk_value = (chunk_value << 8) + ord(char)
+        total += chunk_value
+    return total, len(key)
+
+value, length = folding_hash_code(student_id_list)
+print(f"value: {value}, length: {length}")
+
+def universal_hash_compression(value, a=31, b=17, p=10007, m=1003):
+    return ((a * value + b) % p) % m
+
+hash = universal_hash_compression(value, a=31, b=17, p=10007, m=length)
+print(f"Compression Value: {hash}")
+
+
+# one thing to note is that I have made 3 different hash codes and 3 different compression function
+# this means that I have actually made 6 different hash function because you can combine any hash code with
+# any compression function
+
+"""
+2. Compare and contrast the three hash functions.
+"""
 
 
 
+"""
+3.2
+"""
 
+"""
+1. Implement a hashtable with double hashing collision handling using two suitable hash functions you
+implemented in Question 3.1. Your hashtable should be able to do insertions and searches (no
+requirement to do deletions).
+"""
 
+"""
+2. Test your hashtable with “Student_Records.txt” file given in the Assignment 2 page. Report the
+average collisions for the 3 hash functions from the section 3.1 above, for
+a. 100 names,
+b. 200 names,
+c. 500 names,
+d. the entire dataset.
+(Choose the size of the hashtable so that the entire dataset can fit on the hashtable). You may
+calculate the average collisions as: (number of collisions/ total number of entries added to the
+hashtable) * 100.
+"""
+
+"""
+3. Explain your results from (2) above.
+"""
 
