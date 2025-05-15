@@ -1,3 +1,4 @@
+from collections import deque
 """
 Question 5. 1 (70/100)
 An Euler walk is a traversal of a graph, where each edge is traversed exactly once. Nodes may be visited
@@ -26,6 +27,8 @@ Calling the function: euler_walk([[1, 2, 3], [0], [0], [0]])
 Function output: (False, None)
 """
 
+def euler_walk
+    return
 
 """
 Question 5. 2 (30/100)
