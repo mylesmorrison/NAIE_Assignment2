@@ -159,7 +159,31 @@ print(f"Compression Value: {hash3}")
 # compression was a little bit better but only by a small margin. While the polynomial rolling hash with the multiply
 # add and divide hash compression was outperforming the other hash functions by a larger margin.
 
-#
+# When comparing the 3 hash functions I will base it upon time and space complexities, ease of implementation, security
+# and collision resistance.
+
+# For the first hash function which is the ASCII SUM and division. The ASCII SUM has to loop through each letter and
+# then multiply it so this is of O(n) time complexity where n is the number of letters this is 7 letters or characters
+# so it is really quite small. The modulus division function is of O(1) time. The space complexity is storing the
+# letters in an array so also of O(n) which is the number of letters, again also 7. Probably the easiest to implement
+# but in comparison is very similar to the others. The security is not the best either. The security is determined by
+# its collision resistance as well as predictability and how one small change can affect the final value of the hash.
+# A simple modulus operation does not improve unpredictability and a small change in its value will not affect it as
+# much either.
+
+# The second hash function was the polynomial rolling hash which has a space and time complexity of O(n) time. Due to
+# Horners rule the rolling hash can be made less computationally expensive by using factorisation. It also has better
+# collision resistance for its hash function and the compression function as both use random integers that are less
+# predictable.
+
+# The third hash function uses a folding hash which is interesting as it splits the string into chunks and then uses
+# bitwise operation to get into a single value. It is quite similar to the ASCII SUM hash and has similar level of
+# collision resistance. The universal hash compression function is better though as it uses random constant values for a
+# and b that make it less predictable for how a value will be stored.
+
+# I think what is interesting as I said before would be to test all the hash functions with compression functions to get
+# a better idea how they work with each other. Another parameter to test would be data sets and the actual size of the
+# hash table that will be used.
 
 def testing_collisions_from_hash_functions(filename, number):
     file = open(filename)
@@ -237,6 +261,8 @@ print(results3)
 implemented in Question 3.1. Your hashtable should be able to do insertions and searches (no
 requirement to do deletions).
 """
+
+
 
 """
 2. Test your hashtable with “Student_Records.txt” file given in the Assignment 2 page. Report the
