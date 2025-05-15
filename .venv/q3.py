@@ -1,3 +1,6 @@
+import random
+import string
+import matplotlib.pyplot as plt
 # 3 - Hashtables
 
 """
@@ -60,13 +63,15 @@ def position_mult_index_hash_code(student_id_list):
 
 
 value, length = position_mult_index_hash_code(student_id_list)
-print(f"Hash Code: {value}, length: {length}")
+print(f"Hash Code: {value}, m: {HASH_TABLE_SIZE}")
 # super simple compression function
 def division_hash_compress(value, m):
     return value % m
 
-hash = division_hash_compress(value, length)
-print(f"Compression Value: {hash}")
+hash1 = division_hash_compress(value, HASH_TABLE_SIZE)
+print(f"Compression Value: {hash1}")
+
+
 
 # 2nd Hash Function
 # Polynomial Accumulation - Hash Code
@@ -96,15 +101,15 @@ def polynomial_rolling_hash_code_horners(student_id_list, z=31):
 #print(polynomial_rolling_hash_code_horners(student_id_list))
 
 value, length = polynomial_rolling_hash_code_horners(student_id_list)
-print(f"value: {value}, length: {length}")
+print(f"value: {value}, m: {HASH_TABLE_SIZE}")
 
 # set values for a and b that are constants the rule is that a and b are not divisible by
 # length so then I should use prime number
 def MAD_hash_compress(value, m, a=31, b=17):
     return (a*value + b) % m
 
-hash = MAD_hash_compress(value, length)
-print(f"Compression Value: {hash}")
+hash2 = MAD_hash_compress(value, HASH_TABLE_SIZE)
+print(f"Compression Value: {hash2}")
 
 # 3rd Hash Function
 # Folding Hash Code - Hash Code
@@ -124,13 +129,13 @@ def folding_hash_code(key):
     return total, len(key)
 
 value, length = folding_hash_code(student_id_list)
-print(f"value: {value}, length: {length}")
+print(f"value: {value}, m: {HASH_TABLE_SIZE}")
 
 def universal_hash_compression(value, a=31, b=17, p=10007, m=1003):
     return ((a * value + b) % p) % m
 
-hash = universal_hash_compression(value, a=31, b=17, p=10007, m=length)
-print(f"Compression Value: {hash}")
+hash3 = universal_hash_compression(value, a=31, b=17, p=10007, m=HASH_TABLE_SIZE)
+print(f"Compression Value: {hash3}")
 
 
 # one thing to note is that I have made 3 different hash codes and 3 different compression function
@@ -141,6 +146,86 @@ print(f"Compression Value: {hash}")
 2. Compare and contrast the three hash functions.
 """
 
+# The first hash function that I made was a character multiplied by position index hash code and then the hash
+# compression I used was a division compression
+
+# One note about all the hash functions I decided to use the same modulus and hash table size. I decided to use 1003 as
+# this is a prime number which is good for modulus and also keeps it large so that there is a lesser chances of
+# collision.
+
+# I first just wanted to test numerically how the different hash functions would perform against each other by putting
+# the dataset against it and testing it over a range of entries. What I found from this test was that the SUM ASCII and
+# division hash compression was the worst performing with most collisions. The folding hash and the universal hash
+# compression was a little bit better but only by a small margin. While the polynomial rolling hash with the multiply
+# add and divide hash compression was outperforming the other hash functions by a larger margin.
+
+#
+
+def testing_collisions_from_hash_functions(filename, number):
+    file = open(filename)
+    student_record = ""
+    hash1codes = []
+    hash2codes = []
+    hash3codes = []
+    hash4codes = []
+    for i in range(number):
+        student_record = file.readline()
+        student_record.replace(" ", "")
+        student_id_list = []
+        for i in range(8):
+            if student_record[i] == " ":
+                continue
+            student_id_list.append(student_record[i])
+        hash1 = division_hash_compress(position_mult_index_hash_code(student_id_list)[0], HASH_TABLE_SIZE)
+        hash2 = MAD_hash_compress(polynomial_rolling_hash_code_horners(student_id_list)[0], HASH_TABLE_SIZE)
+        hash3 = universal_hash_compression(folding_hash_code(student_id_list)[0], HASH_TABLE_SIZE)
+        hash4 = universal_hash_compression(polynomial_rolling_hash_code_horners(student_id_list)[0], HASH_TABLE_SIZE)
+        hash1codes.append(hash1)
+        hash2codes.append(hash2)
+        hash3codes.append(hash3)
+        hash4codes.append(hash4)
+
+    return (count_collisions(hash1codes)[1], count_collisions(hash2codes)[1], count_collisions(hash3codes)[1],
+            count_collisions(hash4codes)[1])
+
+def count_collisions(list):
+    freq = {}
+    total_collisions = 0
+    for num in list:
+        if num in freq:
+            freq[num] += 1
+            total_collisions += 1  # This is a collision beyond the first time
+        else:
+            freq[num] = 1
+    return freq, total_collisions
+results1 = []
+results2 = []
+results3 = []
+results4 = []
+entries = list(range(100, 10000, 500))
+for i in range(len(entries)):
+    results1.append(testing_collisions_from_hash_functions("Student_Records.txt", entries[i])[0])
+    results2.append(testing_collisions_from_hash_functions("Student_Records.txt", entries[i])[1])
+    results3.append(testing_collisions_from_hash_functions("Student_Records.txt", entries[i])[2])
+    results4.append(testing_collisions_from_hash_functions("Student_Records.txt", entries[i])[3])
+
+plt.figure(figsize=(10, 6))
+plt.plot(entries, results1, label="Hashcode 1 (Sum ASCII)")
+plt.plot(entries, results2, label="Hashcode 2 (Polynomial)")
+plt.plot(entries, results3, label="Hashcode 3 (Folding)")
+plt.plot(entries, results4, label="Hashcode 4 (Polynomial+Uni)")
+
+plt.xlabel("Number of Data Entries")
+plt.ylabel("Number of Collisions")
+plt.title("Collision Comparison of Hash Functions")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+print(entries)
+print(results1)
+print(results2)
+print(results3)
 
 
 """
